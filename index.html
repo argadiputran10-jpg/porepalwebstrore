@@ -1,0 +1,2045 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Pemesanan Pre-Order Makanan</title>
+    <style>
+      :root {
+        --main-brown: #a66232;
+        --main-brown-dark: #864c24;
+        --main-brown-soft: #c88a5d;
+        --cream-light: #faf9f6;
+        --bg-main: #faf7f4;
+        --btn-warm: #8c5229;
+        --btn-warm-hover: #6e3f1e;
+        --grey-box: #e6dfd9;
+        --text-dark: #2b1d12;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-main);
+        color: var(--text-dark);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding-top: 64px;
+        padding-bottom: 68px;
+      }
+
+      /* TOP NAVBAR - Warna #A66232 & Adaptif di Semua Device */
+      .top-navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        min-height: 60px;
+        background-color: var(--main-brown);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 16px;
+        z-index: 1000;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        gap: 8px;
+      }
+
+      .nav-left,
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .brand-title {
+        font-weight: 700;
+        font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+        color: var(--cream-light);
+        white-space: nowrap;
+        letter-spacing: 0.2px;
+      }
+
+      #userGreeting {
+        font-size: clamp(0.72rem, 2vw, 0.86rem);
+        font-weight: 600;
+        color: var(--cream-light);
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .btn-nav {
+        background: var(--cream-light);
+        border: none;
+        padding: 6px 11px;
+        border-radius: 8px;
+        font-size: clamp(0.72rem, 1.9vw, 0.82rem);
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        color: var(--text-dark);
+        white-space: nowrap;
+      }
+
+      .btn-nav:hover {
+        background: #efe7df;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* MAIN CONTAINER & PAGES */
+      main {
+        flex: 1;
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 20px 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .page {
+        display: none;
+        width: 100%;
+        animation: fadeIn 0.25s ease-in-out;
+      }
+
+      .page.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* LOGIN, REGISTER & CONFIRMATION CARD */
+      .center-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 180px);
+      }
+
+      .page-title {
+        font-size: 1.45rem;
+        font-weight: 700;
+        margin-bottom: 18px;
+        text-align: center;
+        color: var(--text-dark);
+      }
+
+      .auth-card {
+        width: 100%;
+        max-width: 390px;
+        background: linear-gradient(
+          to left,
+          #a66232 0%,
+          #a66232 45%,
+          #be7e52 85%,
+          #faf9f6 100%
+        );
+        border-radius: 16px;
+        padding: 26px 22px;
+        border: none;
+        box-shadow: 0 8px 22px rgba(84, 47, 21, 0.22);
+        margin: 0 auto;
+      }
+
+      .form-group {
+        margin-bottom: 14px;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: #1f130b;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 11px 14px;
+        border: none;
+        border-radius: 10px;
+        background: #ffffff;
+        font-size: 0.9rem;
+        outline: none;
+        color: var(--text-dark);
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+
+      /* WRAPPER PASSWORD & IKON MATA DI UJUNG KANAN */
+      .password-wrapper {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+      }
+
+      .password-wrapper .form-control {
+        padding-right: 42px;
+      }
+
+      .toggle-password-btn {
+        position: absolute;
+        right: 10px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px;
+        color: #6e5544;
+        transition: color 0.2s;
+      }
+
+      .toggle-password-btn:hover {
+        color: var(--main-brown-dark);
+      }
+
+      .toggle-password-btn svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      textarea.form-control {
+        resize: vertical;
+        min-height: 85px;
+      }
+
+      .btn-white {
+        display: block;
+        margin: 18px auto 0;
+        padding: 10px 32px;
+        background: var(--cream-light);
+        color: var(--text-dark);
+        border: none;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        transition: 0.2s;
+      }
+
+      .btn-white:hover {
+        background: var(--main-brown-dark);
+        color: #fff;
+      }
+
+      /* TOMBOL UTAMA DISESUAIKAN DENGAN #A66232 */
+      .btn-warm {
+        display: inline-block;
+        padding: 10px 24px;
+        background: var(--btn-warm);
+        color: var(--cream-light);
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: 0.2s;
+        text-align: center;
+        box-shadow: 0 3px 8px rgba(140, 82, 41, 0.25);
+      }
+
+      .btn-warm:hover {
+        background: var(--btn-warm-hover);
+      }
+
+      /* MAIN PAGE MENU */
+      .mobile-scroll-hint {
+        display: none;
+        text-align: center;
+        font-size: 0.82rem;
+        color: var(--main-brown-dark);
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+
+      .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+        align-items: start;
+        min-height: 60vh;
+      }
+
+      /* TEKS KOSONG / LOADING BERADA DI TENGAH LAYAR (CENTER) */
+      .empty-menu-message {
+        grid-column: 1 / -1;
+        text-align: center;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        min-height: 50vh;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+
+      .menu-item-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+      }
+
+      /* CARD MENU */
+      .menu-card {
+        width: 100%;
+        aspect-ratio: 4 / 4.4;
+        background: linear-gradient(
+          to left,
+          #a66232 0%,
+          #a66232 45%,
+          #be7e52 85%,
+          #faf9f6 100%
+        );
+        border-radius: 14px;
+        border: none;
+        box-shadow: 0 8px 20px rgba(84, 47, 21, 0.22);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 14px;
+        margin: 0 auto;
+      }
+
+      .menu-img-container {
+        width: 100%;
+        height: 55%;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.75);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .menu-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: 0.3s;
+      }
+
+      /* EFEK SAMAR SAAT STOK HABIS ATAU COMING SOON */
+      .menu-card.unavailable .menu-img-container img {
+        opacity: 0.32;
+        filter: grayscale(35%);
+      }
+
+      .status-overlay-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(43, 29, 18, 0.82);
+        color: var(--cream-light);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.92rem;
+        text-align: center;
+        white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        z-index: 2;
+      }
+
+      .menu-card.unavailable .menu-info {
+        opacity: 0.55;
+      }
+
+      /* NAMA PRODUK DI DALAM CARD SEJAJAR DENGAN HARGA & STOK */
+      .menu-info {
+        margin-top: 8px;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .menu-name-in-card {
+        font-size: 1.08rem;
+        font-weight: 800;
+        color: #1f1209;
+        line-height: 1.25;
+      }
+
+      .menu-price {
+        font-weight: 700;
+        font-size: 0.96rem;
+        color: #26160b;
+      }
+
+      .menu-stock {
+        font-size: 0.78rem;
+        color: #331f11;
+        font-weight: 600;
+      }
+
+      .more-detail-btn {
+        align-self: flex-end;
+        background: rgba(56, 31, 14, 0.9);
+        color: var(--cream-light);
+        padding: 6px 13px;
+        border-radius: 20px;
+        font-size: 0.76rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .more-detail-btn:hover {
+        background: #2b1d12;
+      }
+
+      /* QUANTITY CONTROL */
+      .menu-actions {
+        margin-top: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .qty-control {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        background: var(--cream-light);
+        padding: 4px 10px;
+        border-radius: 20px;
+        box-shadow: 0 3px 8px rgba(84, 47, 21, 0.15);
+      }
+
+      .qty-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: none;
+        background: #e5c6b0;
+        color: var(--text-dark);
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .qty-btn:hover {
+        background: var(--main-brown);
+        color: var(--cream-light);
+      }
+
+      .qty-val {
+        font-weight: 700;
+        min-width: 24px;
+        text-align: center;
+      }
+
+      /* PRODUCT DETAIL PAGE */
+      .product-detail-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+        align-items: center;
+        margin-top: 10px;
+      }
+
+      .product-image-box {
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        background: var(--grey-box);
+        border-radius: 14px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(166, 98, 50, 0.15);
+      }
+
+      .product-image-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .product-desc-box h3 {
+        font-size: 1.4rem;
+        margin-bottom: 12px;
+        color: var(--text-dark);
+      }
+
+      .product-desc-box p {
+        line-height: 1.6;
+        color: #4a3728;
+        margin-bottom: 18px;
+      }
+
+      .product-bottom-bars {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-top: 32px;
+      }
+
+      .price-pill {
+        background: #dfc1aa;
+        color: var(--text-dark);
+        padding: 14px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: 800;
+        box-shadow: 0 3px 8px rgba(84, 47, 21, 0.12);
+      }
+
+      /* ORDER SUMMARY */
+      .summary-box {
+        background: rgba(250, 249, 246, 0.95);
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 16px;
+        font-size: 0.85rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      }
+
+      .summary-box h4 {
+        margin-bottom: 6px;
+        font-size: 0.9rem;
+        border-bottom: 1px solid #e0d5cc;
+        padding-bottom: 4px;
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin: 4px 0;
+      }
+
+      .summary-total {
+        font-weight: 700;
+        border-top: 1px dashed #b89f8d;
+        padding-top: 6px;
+        margin-top: 6px;
+      }
+
+      /* ORDER SUCCESS PAGE */
+      .success-circle {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: #ecd9c8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+        box-shadow: 0 6px 16px rgba(166, 98, 50, 0.2);
+      }
+
+      .success-circle svg {
+        width: 76px;
+        height: 76px;
+        stroke: var(--main-brown-dark);
+      }
+
+      /* WAITING & HISTORY LISTS */
+      .list-container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .list-heading {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+      }
+
+      .order-bar {
+        background: #efe7df;
+        border: none;
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        box-shadow: 0 4px 12px rgba(84, 47, 21, 0.12);
+      }
+
+      .order-bar-info h4 {
+        font-size: 1rem;
+        margin-bottom: 4px;
+      }
+
+      .order-bar-info p {
+        font-size: 0.83rem;
+        color: #4a3728;
+      }
+
+      .badge-status {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .badge-waiting {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .badge-done {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      /* ADMIN DASHBOARD */
+      .admin-section {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      }
+
+      .admin-section h3 {
+        margin-bottom: 14px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--main-brown);
+      }
+
+      .admin-form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .preview-box {
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .preview-box img {
+        width: 64px;
+        height: 64px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+      }
+
+      th,
+      td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+        vertical-align: middle;
+      }
+
+      th {
+        background: #f5ebe2;
+        color: var(--text-dark);
+      }
+
+      .admin-thumb {
+        width: 48px;
+        height: 48px;
+        border-radius: 6px;
+        object-fit: cover;
+      }
+
+      .btn-sm {
+        padding: 5px 10px;
+        border-radius: 6px;
+        border: none;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-right: 4px;
+      }
+
+      .btn-success {
+        background: #28a745;
+        color: #fff;
+      }
+      .btn-danger {
+        background: #dc3545;
+        color: #fff;
+      }
+      .btn-warning {
+        background: #ffc107;
+        color: #222;
+      }
+
+      /* BOTTOM NAVIGATION BAR - Warna #A66232 */
+      .bottom-navbar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background-color: var(--main-brown);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 1000;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.12);
+      }
+
+      .bottom-nav-item {
+        background: transparent;
+        border: none;
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.2s;
+        position: relative;
+      }
+
+      .bottom-nav-item svg {
+        width: 26px;
+        height: 26px;
+        fill: var(--cream-light);
+      }
+
+      .bottom-nav-item.active {
+        background: var(--cream-light);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.22);
+        transform: translateY(-6px);
+      }
+
+      .bottom-nav-item.active svg {
+        fill: var(--main-brown-dark);
+      }
+
+      /* MOBILE RESPONSIVE */
+      @media (max-width: 768px) {
+        .top-navbar {
+          padding: 6px 10px;
+        }
+
+        main {
+          padding: 8px 16px;
+        }
+
+        .mobile-scroll-hint {
+          display: block;
+          text-align: center;
+          margin-bottom: 4px;
+        }
+
+        .menu-grid {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0;
+          height: calc(100vh - 155px);
+          height: calc(100dvh - 155px);
+          overflow-y: auto;
+          scroll-snap-type: y mandatory;
+          scrollbar-width: none;
+          width: 100%;
+        }
+
+        .menu-grid::-webkit-scrollbar {
+          display: none;
+        }
+
+        .empty-menu-message {
+          min-height: 100%;
+          margin: auto;
+        }
+
+        .menu-item-wrapper {
+          width: 100%;
+          height: 100%;
+          min-height: 100%;
+          flex-shrink: 0;
+          scroll-snap-align: center;
+          scroll-snap-stop: always;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto;
+          padding: 4px 0;
+        }
+
+        .menu-card {
+          width: 100%;
+          max-width: 315px;
+          aspect-ratio: 4 / 4.2;
+          margin: 0 auto;
+        }
+
+        .product-detail-layout {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+
+        .product-bottom-bars {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- TOP NAVBAR -->
+    <header class="top-navbar">
+      <div class="nav-left">
+        <button id="btnBack" class="btn-nav hidden" onclick="goBack()">
+          ← Kembali
+        </button>
+        <span class="brand-title">🌸 Pre-Order Food</span>
+      </div>
+      <div class="nav-right">
+        <span id="userGreeting"></span>
+        <button
+          id="btnLoginOnlyNav"
+          class="btn-nav"
+          onclick="navigateTo('page-login')"
+        >
+          Login
+        </button>
+        <button
+          id="btnRegisterNav"
+          class="btn-nav"
+          onclick="navigateTo('page-register')"
+        >
+          Daftar
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- 1A. HALAMAN DAFTAR AKUN BARU -->
+      <section id="page-register" class="page">
+        <div class="center-wrapper">
+          <h2 class="page-title">Daftar Akun Pemesanan</h2>
+          <div class="auth-card">
+            <div class="form-group">
+              <label>Nama:</label>
+              <input
+                type="text"
+                id="regNama"
+                class="form-control"
+                placeholder="Contoh: Noval"
+              />
+            </div>
+            <div class="form-group">
+              <label>No. WhatsApp:</label>
+              <input
+                type="tel"
+                id="regWa"
+                class="form-control"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                placeholder="Contoh: 085798981240"
+              />
+            </div>
+            <div class="form-group">
+              <label>Password:</label>
+              <div class="password-wrapper">
+                <input
+                  type="password"
+                  id="regPassword"
+                  class="form-control"
+                  placeholder="Buat password akun Anda"
+                />
+                <button
+                  type="button"
+                  class="toggle-password-btn"
+                  onclick="togglePasswordVisibility('regPassword', this)"
+                  title="Lihat Password"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Alamat Pembeli:</label>
+              <textarea
+                id="regAlamat"
+                class="form-control"
+                placeholder="Contoh: Perumahan Mutiara Puri Harmoni Blok A2"
+              ></textarea>
+            </div>
+            <button class="btn-white" onclick="handleCustomerRegister()">
+              Daftar Sekarang
+            </button>
+            <p style="text-align: center; font-size: 0.8rem; margin-top: 12px; color: #fff">
+              Sudah punya akun?
+              <a
+                href="#"
+                style="color: #fff; font-weight: 700; text-decoration: underline"
+                onclick="navigateTo('page-login')"
+                >Login di sini</a
+              >
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 1B. HALAMAN LOGIN USER & ADMIN TERDAFTAR -->
+      <section id="page-login" class="page">
+        <div class="center-wrapper">
+          <h2 class="page-title">Login Akun Terdaftar</h2>
+          <div class="auth-card">
+            <div class="form-group">
+              <label>Nama:</label>
+              <input
+                type="text"
+                id="loginNama"
+                class="form-control"
+                placeholder="Masukkan nama terdaftar"
+              />
+            </div>
+            <div class="form-group">
+              <label>No. WhatsApp:</label>
+              <input
+                type="tel"
+                id="loginWa"
+                class="form-control"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                placeholder="Masukkan No. WhatsApp terdaftar"
+              />
+            </div>
+            <div class="form-group">
+              <label>Password:</label>
+              <div class="password-wrapper">
+                <input
+                  type="password"
+                  id="loginPassword"
+                  class="form-control"
+                  placeholder="Masukkan password Anda"
+                />
+                <button
+                  type="button"
+                  class="toggle-password-btn"
+                  onclick="togglePasswordVisibility('loginPassword', this)"
+                  title="Lihat Password"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <button class="btn-white" onclick="handleCustomerLogin()">
+              Login
+            </button>
+            <p style="text-align: center; font-size: 0.8rem; margin-top: 12px; color: #fff">
+              Belum pernah daftar?
+              <a
+                href="#"
+                style="color: #fff; font-weight: 700; text-decoration: underline"
+                onclick="navigateTo('page-register')"
+                >Daftar Akun</a
+              >
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. MAIN PAGE MENU -->
+      <section id="page-menu" class="page active">
+        <p id="mobileScrollHint" class="mobile-scroll-hint hidden">
+          ⬇️ Geser (Slide) ke bawah untuk melihat menu berikutnya ⬇️
+        </p>
+        <div id="menuContainer" class="menu-grid"></div>
+      </section>
+
+      <!-- 3. PAGE PRODUCT (MORE DETAIL) -->
+      <section id="page-product" class="page">
+        <div class="product-detail-layout">
+          <div id="detailImgBox" class="product-image-box">🍱</div>
+          <div class="product-desc-box">
+            <h3 id="detailTitle">Nama Menu</h3>
+            <p id="detailDesc">Deskripsi lengkap menu akan tampil di sini.</p>
+            <p style="font-weight: 600; margin-bottom: 12px">
+              Sisa Stok Pre-Order: <span id="detailStock">0</span> porsi
+            </p>
+            <div style="display: flex; align-items: center; gap: 12px">
+              <span style="font-weight: 600">Jumlah Pesanan:</span>
+              <div class="qty-control">
+                <button class="qty-btn" onclick="changeDetailQty(-1)">-</button>
+                <span id="detailQty" class="qty-val">1</span>
+                <button class="qty-btn" onclick="changeDetailQty(1)">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="product-bottom-bars">
+          <div id="detailPrice" class="price-pill">Rp 50.000,00</div>
+          <button
+            id="detailOrderBtn"
+            class="btn-warm"
+            style="font-size: 1.15rem; padding: 14px"
+            onclick="startPreOrderFromDetail()"
+          >
+            Pre-Order Now
+          </button>
+        </div>
+      </section>
+
+      <!-- 4. PAGE KONFIRMASI ALAMAT & RINGKASAN MENU -->
+      <section id="page-confirm-address" class="page">
+        <div class="center-wrapper">
+          <h2 class="page-title">Konfirmasi Alamat & Pesanan</h2>
+          <div class="auth-card">
+            <div class="summary-box">
+              <h4>📋 Ringkasan Pesanan Pre-Order</h4>
+              <div class="summary-row">
+                <span id="summaryMenuName">Menu 1</span>
+                <span id="summaryQty">x1</span>
+              </div>
+              <div class="summary-row">
+                <span>Pemesan:</span>
+                <span id="summaryCustomerName">-</span>
+              </div>
+              <div class="summary-row">
+                <span>No. WhatsApp:</span>
+                <span id="summaryCustomerWa">-</span>
+              </div>
+              <div class="summary-row summary-total">
+                <span>Total Bayar:</span>
+                <span id="summaryTotalPrice">Rp 0</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Alamat pembeli (Terintegrasi & bisa diubah jika pindah alamat):</label>
+              <textarea
+                id="confirmAlamatInput"
+                class="form-control"
+                placeholder="Mutiara puri harmoni"
+              ></textarea>
+            </div>
+            <div style="text-align: center; margin-top: 16px">
+              <button class="btn-warm" onclick="submitFinalOrder()">
+                Konfirmasi Pesanan
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. PAGE PEMESANAN BERHASIL -->
+      <section id="page-success" class="page">
+        <div class="center-wrapper">
+          <div class="success-circle">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <h3 style="font-size: 1.3rem; margin-bottom: 6px">
+            Terimakasih sudah memesan
+          </h3>
+          <p style="color: #555; margin-bottom: 20px">
+            menunggu pesanan selesai..
+          </p>
+          <div style="display: flex; gap: 12px">
+            <button class="btn-warm" onclick="navigateTo('page-waiting')">
+              Lihat Status Pesanan
+            </button>
+            <button class="btn-nav" onclick="navigateTo('page-menu')">
+              Kembali ke Menu
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. PAGE MENUNGGU PESANAN -->
+      <section id="page-waiting" class="page">
+        <div class="list-container">
+          <h2 class="list-heading">Menunggu Pesanan</h2>
+          <div id="waitingListContainer"></div>
+        </div>
+      </section>
+
+      <!-- 7. PAGE RIWAYAT PEMBELIAN -->
+      <section id="page-history" class="page">
+        <div class="list-container">
+          <h2 class="list-heading">Riwayat Pembelian</h2>
+          <div id="historyListContainer"></div>
+        </div>
+      </section>
+
+      <!-- 8. PAGE ADMIN DASHBOARD -->
+      <section id="page-admin" class="page">
+        <div class="admin-section">
+          <h3>📦 Kelola Stok, Menu & Upload Foto Makanan (CRUD)</h3>
+          <input type="hidden" id="editMenuId" />
+          <div class="admin-form-grid">
+            <input
+              type="text"
+              id="adminMenuName"
+              class="form-control"
+              placeholder="Nama Menu (misal: Salmon Mentai)"
+            />
+            <input
+              type="number"
+              id="adminMenuPrice"
+              class="form-control"
+              placeholder="Harga (misal: 50000)"
+            />
+            <input
+              type="number"
+              id="adminMenuStock"
+              class="form-control"
+              placeholder="Stok (misal: 15)"
+            />
+            <select id="adminMenuStatus" class="form-control">
+              <option value="available">Tersedia (Pre-Order)</option>
+              <option value="coming_soon">Coming Soon</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Upload File Foto Makanan (Tersimpan ke Database):</label>
+            <input
+              type="file"
+              id="adminMenuImageFile"
+              class="form-control"
+              accept="image/*"
+              onchange="handleImageFileSelect(event)"
+            />
+            <div id="adminPreviewWrapper" class="preview-box hidden">
+              <img id="adminImagePreview" src="" alt="Preview" />
+              <span style="font-size: 0.8rem; color: #555">Foto siap disimpan</span>
+            </div>
+          </div>
+          <textarea
+            id="adminMenuDesc"
+            class="form-control"
+            style="min-height: 60px; margin-bottom: 12px"
+            placeholder="Deskripsi lengkap produk..."
+          ></textarea>
+          <button class="btn-warm" onclick="saveMenuFromAdmin()">
+            Simpan Menu & Foto
+          </button>
+          <button class="btn-nav" onclick="resetAdminForm()">Reset Form</button>
+
+          <div class="table-responsive" style="margin-top: 18px">
+            <table>
+              <thead>
+                <tr>
+                  <th>Foto</th>
+                  <th>Nama Menu</th>
+                  <th>Harga</th>
+                  <th>Stok</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="adminMenuTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <h3>🧾 Daftar Pesanan Masuk (Update Status Pre-Order)</h3>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Pelanggan & WA</th>
+                  <th>Alamat Pengiriman</th>
+                  <th>Pesanan</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Aksi Admin</th>
+                </tr>
+              </thead>
+              <tbody id="adminOrderTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- BOTTOM NAVIGATION BAR -->
+    <nav class="bottom-navbar">
+      <button
+        id="nav-home"
+        class="bottom-nav-item active"
+        onclick="navigateTo('page-menu')"
+        title="Menu Utama"
+      >
+        <svg viewBox="0 0 24 24">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+        </svg>
+      </button>
+      <button
+        id="nav-history"
+        class="bottom-nav-item"
+        onclick="navigateTo('page-history')"
+        title="Riwayat Pembelian"
+      >
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"
+          />
+        </svg>
+      </button>
+      <button
+        id="nav-waiting"
+        class="bottom-nav-item"
+        onclick="navigateTo('page-waiting')"
+        title="Menunggu Pesanan"
+      >
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42A8.962 8.962 0 0 0 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9a8.994 8.994 0 0 0 7.03-14.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"
+          />
+        </svg>
+      </button>
+    </nav>
+
+    <script>
+      // Otomatis menyesuaikan localhost atau IP (misal 192.168.1.9)
+      const API_HOST = window.location.hostname || "localhost";
+      const API_URL = `http://${API_HOST}:3000/api`;
+      const ADMIN_PIN = "08111345";
+      const DEFAULT_PLACEHOLDER =
+        "data:image/svg+xml;charset=UTF-8," +
+        encodeURIComponent(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect width="300" height="300" fill="#e6dfd9"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#7a6a5e" font-family="sans-serif" font-size="20">Belum Ada Foto</text></svg>`
+        );
+
+      let navigationStack = ["page-menu"];
+      let menusCache = [];
+      let selectedQuantities = {};
+      let currentDetailMenuId = null;
+      let pendingCheckoutOrder = null;
+      let adminSelectedBase64 = "";
+
+      // FUNGSI TOGGLE LIHAT / SEMBUNYIKAN PASSWORD (IKON MATA)
+      function togglePasswordVisibility(inputId, btnElement) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+
+        if (input.type === "password") {
+          input.type = "text";
+          btnElement.title = "Sembunyikan Password";
+          btnElement.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+              <line x1="1" y1="1" x2="23" y2="23" />
+            </svg>
+          `;
+        } else {
+          input.type = "password";
+          btnElement.title = "Lihat Password";
+          btnElement.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          `;
+        }
+      }
+
+      function getCurrentUser() {
+        const data = sessionStorage.getItem("po_logged_user");
+        return data ? JSON.parse(data) : null;
+      }
+
+      function formatRupiah(num) {
+        return "Rp " + Number(num).toLocaleString("id-ID") + ",00";
+      }
+
+      function navigateTo(pageId, pushHistory = true) {
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.remove("active"));
+        document.getElementById(pageId).classList.add("active");
+
+        const currentTop = navigationStack[navigationStack.length - 1];
+        if (pushHistory && currentTop !== pageId) {
+          navigationStack.push(pageId);
+        }
+
+        const btnBack = document.getElementById("btnBack");
+        if (pageId === "page-menu") {
+          btnBack.classList.add("hidden");
+        } else {
+          btnBack.classList.remove("hidden");
+        }
+
+        document
+          .querySelectorAll(".bottom-nav-item")
+          .forEach((b) => b.classList.remove("active"));
+        if (pageId === "page-menu" || pageId === "page-product") {
+          document.getElementById("nav-home").classList.add("active");
+        } else if (pageId === "page-history") {
+          document.getElementById("nav-history").classList.add("active");
+        } else if (pageId === "page-waiting") {
+          document.getElementById("nav-waiting").classList.add("active");
+        }
+
+        if (pageId === "page-menu") renderMenuGrid();
+        if (pageId === "page-waiting") renderWaitingOrders();
+        if (pageId === "page-history") renderHistoryOrders();
+        if (pageId === "page-admin") renderAdminDashboard();
+      }
+
+      function goBack() {
+        if (navigationStack.length > 1) {
+          navigationStack.pop();
+          const prevPage = navigationStack[navigationStack.length - 1];
+          navigateTo(prevPage, false);
+        } else {
+          navigateTo("page-menu", false);
+        }
+      }
+
+      function updateHeaderUser() {
+        const user = getCurrentUser();
+        const greeting = document.getElementById("userGreeting");
+        const btnLoginOnly = document.getElementById("btnLoginOnlyNav");
+        const btnRegister = document.getElementById("btnRegisterNav");
+
+        if (user) {
+          greeting.textContent = `Halo, ${user.nama}`;
+          if (user.role && user.role.toLowerCase() === "admin") {
+            btnLoginOnly.classList.remove("hidden");
+            btnLoginOnly.textContent = "Dashboard Admin";
+            btnLoginOnly.onclick = () => navigateTo("page-admin");
+          } else {
+            btnLoginOnly.classList.add("hidden");
+          }
+          btnRegister.textContent = "Keluar";
+          btnRegister.onclick = () => {
+            sessionStorage.removeItem("po_logged_user");
+            updateHeaderUser();
+            navigateTo("page-menu");
+          };
+        } else {
+          greeting.textContent = "";
+          btnLoginOnly.classList.remove("hidden");
+          btnLoginOnly.textContent = "Login";
+          btnLoginOnly.onclick = () => navigateTo("page-login");
+          btnRegister.textContent = "Daftar";
+          btnRegister.onclick = () => navigateTo("page-register");
+        }
+      }
+
+      // 1A. DAFTAR AKUN BARU KE DATABASE
+      async function handleCustomerRegister() {
+        const nama = document.getElementById("regNama").value.trim();
+        const wa = document.getElementById("regWa").value.trim();
+        const password = document.getElementById("regPassword").value.trim();
+        const alamat = document.getElementById("regAlamat").value.trim();
+
+        if (!nama || !wa || !password || !alamat) {
+          alert("Harap lengkapi Nama, Nomor WhatsApp, Password, dan Alamat!");
+          return;
+        }
+
+        try {
+          const res = await fetch(`${API_URL}/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nama, wa, password, alamat }),
+          });
+          const data = await res.json();
+
+          if (!res.ok) {
+            alert(data.error || "Gagal mendaftar akun.");
+            return;
+          }
+
+          sessionStorage.setItem("po_logged_user", JSON.stringify(data));
+          updateHeaderUser();
+
+          if (pendingCheckoutOrder) {
+            openConfirmAddressPage();
+          } else {
+            navigateTo("page-menu");
+          }
+        } catch (err) {
+          alert(
+            "Gagal terhubung ke server backend! Pastikan 'node server.js' sudah menyala."
+          );
+        }
+      }
+
+      // 1B. LOGIN AKUN TERDAFTAR (JIKA ROLE = ADMIN LANGSUNG KE DASHBOARD ADMIN)
+      async function handleCustomerLogin() {
+        const nama = document.getElementById("loginNama").value.trim();
+        const wa = document.getElementById("loginWa").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
+
+        if (!nama || !wa || !password) {
+          alert("Harap isi Nama, Nomor WhatsApp, dan Password Anda!");
+          return;
+        }
+
+        try {
+          const res = await fetch(`${API_URL}/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nama, wa, password }),
+          });
+          const data = await res.json();
+
+          if (!res.ok) {
+            alert(data.error || "Login gagal! Periksa kembali data Anda.");
+            return;
+          }
+
+          sessionStorage.setItem("po_logged_user", JSON.stringify(data));
+          updateHeaderUser();
+
+          if (data.role && data.role.toLowerCase() === "admin") {
+            pendingCheckoutOrder = null;
+            navigateTo("page-admin");
+          } else if (pendingCheckoutOrder) {
+            openConfirmAddressPage();
+          } else {
+            navigateTo("page-menu");
+          }
+        } catch (err) {
+          alert(
+            "Gagal terhubung ke server backend! Pastikan 'node server.js' sudah menyala."
+          );
+        }
+      }
+
+      // 2. AMBIL MENU DARI DATABASE & TAMPILKAN CARD
+      async function renderMenuGrid() {
+        const container = document.getElementById("menuContainer");
+        const scrollHint = document.getElementById("mobileScrollHint");
+        if (scrollHint) scrollHint.classList.add("hidden");
+
+        container.innerHTML =
+          '<p class="empty-menu-message">Memuat menu dari database...</p>';
+
+        try {
+          const res = await fetch(`${API_URL}/menus`);
+          const rows = await res.json();
+
+          menusCache = rows.map((r) => ({
+            id: r.id,
+            name: r.nama_menu,
+            price: Number(r.harga),
+            stock: Number(r.stok),
+            status: r.status,
+            image: r.menu_images || r.gambar_url || "",
+            description: r.deskripsi,
+          }));
+
+          if (menusCache.length === 0) {
+            container.innerHTML =
+              '<p class="empty-menu-message">Menu belum ditambahkan oleh Admin.</p>';
+            return;
+          }
+
+          if (scrollHint) scrollHint.classList.remove("hidden");
+
+          container.innerHTML = "";
+          menusCache.forEach((menu) => {
+            // Pastikan jumlah pilihan tidak melebihi sisa stok terbaru
+            if (
+              !selectedQuantities[menu.id] ||
+              selectedQuantities[menu.id] > menu.stock ||
+              selectedQuantities[menu.id] < 1
+            ) {
+              selectedQuantities[menu.id] = 1;
+            }
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "menu-item-wrapper";
+            const imgSrc = menu.image || DEFAULT_PLACEHOLDER;
+
+            if (menu.status === "coming_soon" || menu.stock <= 0) {
+              const statusLabel =
+                menu.status === "coming_soon" ? "Coming Soon" : "Stok Habis";
+              wrapper.innerHTML = `
+                <div class="menu-card unavailable">
+                  <div class="menu-img-container">
+                    <img src="${imgSrc}" alt="${menu.name}" onerror="this.src='${DEFAULT_PLACEHOLDER}'">
+                    <div class="status-overlay-text">${statusLabel}</div>
+                  </div>
+                  <div class="menu-info">
+                    <div class="menu-name-in-card">${menu.name}</div>
+                    <div class="menu-price">${formatRupiah(menu.price)}</div>
+                    <div class="menu-stock">${
+                      menu.status === "coming_soon"
+                        ? "Segera Hadir"
+                        : "Tersedia: 0 porsi"
+                    }</div>
+                  </div>
+                  <div style="height: 24px;"></div>
+                </div>
+              `;
+            } else {
+              // PERBAIKAN: initiatePreOrder hanya mengirim menu.id dan mengambil jumlah terbaru secara real-time
+              wrapper.innerHTML = `
+                <div class="menu-card">
+                  <div class="menu-img-container">
+                    <img src="${imgSrc}" alt="${menu.name}" onerror="this.src='${DEFAULT_PLACEHOLDER}'">
+                  </div>
+                  <div class="menu-info">
+                    <div class="menu-name-in-card">${menu.name}</div>
+                    <div class="menu-price">${formatRupiah(menu.price)}</div>
+                    <div class="menu-stock">Tersedia: ${menu.stock} porsi</div>
+                  </div>
+                  <button class="more-detail-btn" onclick="openProductDetail(${menu.id})">More detail →</button>
+                </div>
+                <div class="menu-actions">
+                  <div class="qty-control">
+                    <button class="qty-btn" onclick="updateCardQty(${menu.id}, -1)">-</button>
+                    <span id="qty-card-${menu.id}" class="qty-val">${selectedQuantities[menu.id]}</span>
+                    <button class="qty-btn" onclick="updateCardQty(${menu.id}, 1)">+</button>
+                  </div>
+                  <button class="btn-warm" onclick="initiatePreOrder(${menu.id})">Pre-order now</button>
+                </div>
+              `;
+            }
+            container.appendChild(wrapper);
+          });
+        } catch (err) {
+          container.innerHTML =
+            '<p class="empty-menu-message" style="color:#d9534f;">⚠️ Belum terhubung ke Backend (http://localhost:3000). Pastikan XAMPP dan node server.js sudah dijalankan.</p>';
+        }
+      }
+
+      function updateCardQty(menuId, delta) {
+        const menu = menusCache.find((m) => Number(m.id) === Number(menuId));
+        if (!menu) return;
+        let next = (selectedQuantities[menuId] || 1) + delta;
+        if (next < 1) next = 1;
+        if (next > menu.stock) next = menu.stock;
+        selectedQuantities[menuId] = next;
+        const qtySpan = document.getElementById(`qty-card-${menuId}`);
+        if (qtySpan) qtySpan.textContent = next;
+      }
+
+      function openProductDetail(menuId) {
+        const menu = menusCache.find((m) => Number(m.id) === Number(menuId));
+        if (!menu) return;
+        currentDetailMenuId = menu.id;
+        if (
+          !selectedQuantities[menu.id] ||
+          selectedQuantities[menu.id] > menu.stock
+        ) {
+          selectedQuantities[menu.id] = 1;
+        }
+
+        const imgBox = document.getElementById("detailImgBox");
+        const imgSrc = menu.image || DEFAULT_PLACEHOLDER;
+        if (imgBox) {
+          imgBox.innerHTML = `<img src="${imgSrc}" onerror="this.src='${DEFAULT_PLACEHOLDER}'">`;
+        }
+        document.getElementById("detailTitle").textContent = menu.name;
+        document.getElementById("detailDesc").textContent =
+          menu.description || "Tidak ada deskripsi tambahan.";
+        document.getElementById("detailStock").textContent = menu.stock;
+        document.getElementById("detailQty").textContent =
+          selectedQuantities[menu.id];
+        document.getElementById("detailPrice").textContent = formatRupiah(
+          menu.price * selectedQuantities[menu.id]
+        );
+
+        navigateTo("page-product");
+      }
+
+      function changeDetailQty(delta) {
+        const menu = menusCache.find(
+          (m) => Number(m.id) === Number(currentDetailMenuId)
+        );
+        if (!menu) return;
+        let next = (selectedQuantities[menu.id] || 1) + delta;
+        if (next < 1) next = 1;
+        if (next > menu.stock) next = menu.stock;
+        selectedQuantities[menu.id] = next;
+        document.getElementById("detailQty").textContent = next;
+        document.getElementById("detailPrice").textContent = formatRupiah(
+          menu.price * next
+        );
+      }
+
+      function startPreOrderFromDetail() {
+        initiatePreOrder(currentDetailMenuId);
+      }
+
+      // PERBAIKAN: Selalu membaca jumlah pesanan secara real-time dari selectedQuantities
+      function initiatePreOrder(menuId) {
+        const menu = menusCache.find((m) => Number(m.id) === Number(menuId));
+        const qty = Number(selectedQuantities[menuId] || 1);
+
+        if (!menu || Number(menu.stock) < qty) {
+          alert("Maaf, stok tidak mencukupi.");
+          return;
+        }
+
+        pendingCheckoutOrder = {
+          menuId: menu.id,
+          menuName: menu.name,
+          price: menu.price,
+          qty: qty,
+        };
+
+        const user = getCurrentUser();
+        if (!user) {
+          alert(
+            "Silakan Login (jika sudah punya akun) atau Daftar terlebih dahulu untuk melanjutkan Pre-Order."
+          );
+          navigateTo("page-login");
+          return;
+        }
+        openConfirmAddressPage();
+      }
+
+      function openConfirmAddressPage() {
+        const user = getCurrentUser();
+        if (!user || !pendingCheckoutOrder) return;
+
+        const total = pendingCheckoutOrder.price * pendingCheckoutOrder.qty;
+        document.getElementById("summaryMenuName").textContent =
+          pendingCheckoutOrder.menuName;
+        document.getElementById("summaryQty").textContent =
+          `x${pendingCheckoutOrder.qty}`;
+        document.getElementById("summaryCustomerName").textContent = user.nama;
+        document.getElementById("summaryCustomerWa").textContent =
+          user.wa || user.no_whatsapp || "-";
+        document.getElementById("summaryTotalPrice").textContent =
+          formatRupiah(total);
+        document.getElementById("confirmAlamatInput").value = user.alamat || "";
+
+        navigateTo("page-confirm-address");
+      }
+
+      // 3. KIRIM PESANAN BARU KE DATABASE & RESET ANGKA PILIHAN KE 1
+      async function submitFinalOrder() {
+        const user = getCurrentUser();
+        const confirmedAddress = document
+          .getElementById("confirmAlamatInput")
+          .value.trim();
+
+        if (!confirmedAddress) {
+          alert("Alamat pengiriman tidak boleh kosong!");
+          return;
+        }
+
+        try {
+          const orderedMenuId = pendingCheckoutOrder.menuId;
+          const res = await fetch(`${API_URL}/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              customer_id: user.id,
+              menu_id: orderedMenuId,
+              qty: pendingCheckoutOrder.qty,
+              address: confirmedAddress,
+            }),
+          });
+
+          const result = await res.json();
+          if (!res.ok) {
+            alert(result.error || "Gagal membuat pesanan");
+            return;
+          }
+
+          // Reset jumlah pilihan menu kembali ke 1 setelah berhasil memesan
+          selectedQuantities[orderedMenuId] = 1;
+
+          user.alamat = confirmedAddress;
+          sessionStorage.setItem("po_logged_user", JSON.stringify(user));
+          pendingCheckoutOrder = null;
+          navigateTo("page-success");
+        } catch (err) {
+          alert("Terjadi kesalahan saat mengirim pesanan ke server.");
+        }
+      }
+
+      // 4. MENUNGGU PESANAN & RIWAYAT (TERINTEGRASI DENGAN ID & NO WA USER)
+      async function renderWaitingOrders() {
+        const container = document.getElementById("waitingListContainer");
+        const user = getCurrentUser();
+
+        if (!user || (!user.id && !user.wa && !user.no_whatsapp)) {
+          container.innerHTML = `
+            <div class="order-bar">
+              <p>Silakan <a href="#" style="font-weight:700; color:var(--main-brown-dark);" onclick="navigateTo('page-login')">Login</a> atau <a href="#" style="font-weight:700; color:var(--main-brown-dark);" onclick="navigateTo('page-register')">Daftar</a> terlebih dahulu untuk melihat pesanan Anda.</p>
+            </div>`;
+          return;
+        }
+
+        try {
+          const waParam = user.wa || user.no_whatsapp || "";
+          const res = await fetch(
+            `${API_URL}/orders?customer_id=${encodeURIComponent(user.id || "")}&wa=${encodeURIComponent(waParam)}`
+          );
+          const myOrders = await res.json();
+
+          if (!res.ok || !Array.isArray(myOrders)) {
+            throw new Error(
+              myOrders.error || "Gagal memuat data pesanan dari server."
+            );
+          }
+
+          const waiting = myOrders.filter(
+            (o) =>
+              String(o.status || "Menunggu")
+                .trim()
+                .toLowerCase() !== "selesai"
+          );
+
+          if (waiting.length === 0) {
+            container.innerHTML = `<div class="order-bar"><p>Anda belum memiliki pesanan yang sedang diproses.</p></div>`;
+            return;
+          }
+
+          container.innerHTML = waiting
+            .map(
+              (o) => `
+                <div class="order-bar">
+                  <div class="order-bar-info">
+                    <h4>${o.menuName} (x${o.qty}) - ${formatRupiah(o.totalPrice)}</h4>
+                    <p>Kode: <b>${o.kode_pesanan}</b> | Pemesan: <b>${o.customerName}</b> (${o.customerWa})</p>
+                    <p>Alamat: ${o.address}</p>
+                  </div>
+                  <span class="badge-status badge-waiting">⏳ ${o.status || "Menunggu"}</span>
+                </div>
+              `
+            )
+            .join("");
+        } catch (err) {
+          container.innerHTML = `<div class="order-bar"><p>⚠️ Gagal memuat pesanan (${err.message}). Pastikan terminal 'node server.js' sudah di-restart.</p></div>`;
+        }
+      }
+
+      async function renderHistoryOrders() {
+        const container = document.getElementById("historyListContainer");
+        const user = getCurrentUser();
+
+        if (!user || (!user.id && !user.wa && !user.no_whatsapp)) {
+          container.innerHTML = `
+            <div class="order-bar">
+              <p>Silakan <a href="#" style="font-weight:700; color:var(--main-brown-dark);" onclick="navigateTo('page-login')">Login</a> atau <a href="#" style="font-weight:700; color:var(--main-brown-dark);" onclick="navigateTo('page-register')">Daftar</a> terlebih dahulu untuk melihat riwayat pembelian Anda.</p>
+            </div>`;
+          return;
+        }
+
+        try {
+          const waParam = user.wa || user.no_whatsapp || "";
+          const res = await fetch(
+            `${API_URL}/orders?customer_id=${encodeURIComponent(user.id || "")}&wa=${encodeURIComponent(waParam)}`
+          );
+          const myOrders = await res.json();
+
+          if (!res.ok || !Array.isArray(myOrders)) {
+            throw new Error(
+              myOrders.error || "Gagal memuat data riwayat dari server."
+            );
+          }
+
+          const done = myOrders.filter(
+            (o) =>
+              String(o.status || "")
+                .trim()
+                .toLowerCase() === "selesai"
+          );
+
+          if (done.length === 0) {
+            container.innerHTML = `<div class="order-bar"><p>Belum ada riwayat pesanan yang selesai untuk akun Anda.</p></div>`;
+            return;
+          }
+
+          container.innerHTML = done
+            .map(
+              (o) => `
+                <div class="order-bar">
+                  <div class="order-bar-info">
+                    <h4>${o.menuName} (x${o.qty}) - ${formatRupiah(o.totalPrice)}</h4>
+                    <p>Kode: <b>${o.kode_pesanan}</b> | Pemesan: <b>${o.customerName}</b> | Alamat: ${o.address}</p>
+                  </div>
+                  <span class="badge-status badge-done">✅ Selesai</span>
+                </div>
+              `
+            )
+            .join("");
+        } catch (err) {
+          container.innerHTML = `<div class="order-bar"><p>⚠️ Gagal memuat riwayat (${err.message}). Pastikan terminal 'node server.js' sudah di-restart.</p></div>`;
+        }
+      }
+
+      // 5. KONVERSI FILE GAMBAR KE BASE64 UNTUK DISIMPAN KE MYSQL
+      function handleImageFileSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const img = new Image();
+          img.onload = function () {
+            const canvas = document.createElement("canvas");
+            const MAX_SIZE = 800;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height && width > MAX_SIZE) {
+              height *= MAX_SIZE / width;
+              width = MAX_SIZE;
+            } else if (height > MAX_SIZE) {
+              width *= MAX_SIZE / height;
+              height = MAX_SIZE;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+
+            adminSelectedBase64 = canvas.toDataURL("image/jpeg", 0.82);
+            const previewImg = document.getElementById("adminImagePreview");
+            const previewWrap = document.getElementById("adminPreviewWrapper");
+            previewImg.src = adminSelectedBase64;
+            previewWrap.classList.remove("hidden");
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // 6. CRUD ADMIN KE DATABASE
+      async function renderAdminDashboard() {
+        const resMenus = await fetch(`${API_URL}/menus`);
+        const rows = await resMenus.json();
+        menusCache = rows.map((r) => ({
+          id: r.id,
+          name: r.nama_menu,
+          price: Number(r.harga),
+          stock: Number(r.stok),
+          status: r.status,
+          image: r.menu_images || r.gambar_url || "",
+          description: r.deskripsi,
+        }));
+
+        document.getElementById("adminMenuTable").innerHTML = menusCache
+          .map(
+            (m) => `
+              <tr>
+                <td><img src="${m.image || DEFAULT_PLACEHOLDER}" class="admin-thumb" onerror="this.src='${DEFAULT_PLACEHOLDER}'"></td>
+                <td><b>${m.name}</b></td>
+                <td>${formatRupiah(m.price)}</td>
+                <td>${m.stock} porsi</td>
+                <td>${m.status === "available" ? "Tersedia" : "Coming Soon"}</td>
+                <td>
+                  <button class="btn-sm btn-warning" onclick="editMenu(${m.id})">Edit</button>
+                  <button class="btn-sm btn-danger" onclick="deleteMenu(${m.id})">Hapus</button>
+                </td>
+              </tr>
+            `
+          )
+          .join("");
+
+        const resOrders = await fetch(`${API_URL}/orders?role=admin`, {
+          headers: { "x-admin-pin": ADMIN_PIN },
+        });
+        const orders = await resOrders.json();
+        const orderTbody = document.getElementById("adminOrderTable");
+
+        if (!Array.isArray(orders) || orders.length === 0) {
+          orderTbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Belum ada pesanan masuk.</td></tr>`;
+          return;
+        }
+
+        orderTbody.innerHTML = orders
+          .map(
+            (o) => `
+              <tr>
+                <td>${o.kode_pesanan}</td>
+                <td><b>${o.customerName}</b><br/><small>${o.customerWa}</small></td>
+                <td>${o.address}</td>
+                <td>${o.menuName} (x${o.qty})</td>
+                <td>${formatRupiah(o.totalPrice)}</td>
+                <td><b>${o.status || "Menunggu"}</b></td>
+                <td>
+                  ${
+                    String(o.status || "")
+                      .trim()
+                      .toLowerCase() !== "selesai"
+                      ? `<button class="btn-sm btn-success" onclick="markOrderDone(${o.id})">Tandai Selesai</button>`
+                      : "-"
+                  }
+                  <button class="btn-sm btn-danger" onclick="deleteOrder(${o.id})">Hapus</button>
+                </td>
+              </tr>
+            `
+          )
+          .join("");
+      }
+
+      async function saveMenuFromAdmin() {
+        const id = document.getElementById("editMenuId").value;
+        const payload = {
+          name: document.getElementById("adminMenuName").value.trim(),
+          price: Number(document.getElementById("adminMenuPrice").value),
+          stock: Number(document.getElementById("adminMenuStock").value),
+          status: document.getElementById("adminMenuStatus").value,
+          image: adminSelectedBase64,
+          description: document.getElementById("adminMenuDesc").value.trim(),
+        };
+
+        if (!payload.name || isNaN(payload.price)) {
+          alert("Nama menu dan harga wajib diisi!");
+          return;
+        }
+
+        if (id) {
+          await fetch(`${API_URL}/menus/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+        } else {
+          await fetch(`${API_URL}/menus`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+        }
+
+        resetAdminForm();
+        renderAdminDashboard();
+      }
+
+      function editMenu(menuId) {
+        const menu = menusCache.find((m) => Number(m.id) === Number(menuId));
+        if (!menu) return;
+        document.getElementById("editMenuId").value = menu.id;
+        document.getElementById("adminMenuName").value = menu.name;
+        document.getElementById("adminMenuPrice").value = menu.price;
+        document.getElementById("adminMenuStock").value = menu.stock;
+        document.getElementById("adminMenuStatus").value = menu.status;
+        document.getElementById("adminMenuDesc").value = menu.description || "";
+
+        adminSelectedBase64 = menu.image || "";
+        const fileInput = document.getElementById("adminMenuImageFile");
+        if (fileInput) fileInput.value = "";
+
+        const previewImg = document.getElementById("adminImagePreview");
+        const previewWrap = document.getElementById("adminPreviewWrapper");
+        if (adminSelectedBase64) {
+          previewImg.src = adminSelectedBase64;
+          previewWrap.classList.remove("hidden");
+        } else {
+          previewWrap.classList.add("hidden");
+        }
+      }
+
+      async function deleteMenu(menuId) {
+        if (!confirm("Yakin ingin menghapus menu ini dari database?")) return;
+        await fetch(`${API_URL}/menus/${menuId}`, { method: "DELETE" });
+        renderAdminDashboard();
+      }
+
+      async function markOrderDone(orderId) {
+        await fetch(`${API_URL}/orders/${orderId}/done`, { method: "PUT" });
+        renderAdminDashboard();
+      }
+
+      async function deleteOrder(orderId) {
+        if (!confirm("Hapus pesanan ini dari database?")) return;
+        await fetch(`${API_URL}/orders/${orderId}`, { method: "DELETE" });
+        renderAdminDashboard();
+      }
+
+      function resetAdminForm() {
+        document.getElementById("editMenuId").value = "";
+        document.getElementById("adminMenuName").value = "";
+        document.getElementById("adminMenuPrice").value = "";
+        document.getElementById("adminMenuStock").value = "";
+        document.getElementById("adminMenuStatus").value = "available";
+        document.getElementById("adminMenuDesc").value = "";
+        const fileInput = document.getElementById("adminMenuImageFile");
+        if (fileInput) fileInput.value = "";
+        adminSelectedBase64 = "";
+        document.getElementById("adminPreviewWrapper").classList.add("hidden");
+      }
+
+      updateHeaderUser();
+      renderMenuGrid();
+    </script>
+  </body>
+</html>
